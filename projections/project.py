@@ -101,7 +101,6 @@ for _path_to_weights in glob.glob(PATH_TO_WEIGHTS+"/*.hdf5"):
             # Save Extracted Features
             np.save(target_dir_path+"/block5_pool_features.npy", features[_idx])
             print "Shape : ",features[_idx].shape
-        break
 
         if total > TOTAL_TEST_SET_SIZE:
             break
