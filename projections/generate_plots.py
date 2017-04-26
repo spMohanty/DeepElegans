@@ -9,6 +9,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from matplotlib.colors import ListedColormap
+# construct cmap
+flatui = ["#9b59b6", "#3498db", "#e74c3c", "#34495e", "#2ecc71"]
+my_cmap = ListedColormap(sns.color_palette(flatui).as_hex())
+
+
 for experiment_path in glob.glob("results/*"):
     print experiment_path
     number_of_epochs = len(glob.glob(experiment_path+"/*"))
@@ -27,7 +33,10 @@ for experiment_path in glob.glob("results/*"):
             Y.append(projection[1])
 
         plt.clf()
-        plt.scatter(X,Y, c=class_indices)
-        plt.legend(('2016.07.18', '2016.07.20', '2016.07.22', '2016.07.24', '2016.07.26'), loc="lower right")
+        plt.scatter(X,Y, c=class_indices, cmap=my_cmap)
+        plt.colorbar()
+        plt.xlabel('Epoch : '+str(_epoch_number))
+        plt.title("Projection for prediction of age of C.Elegans.")
+
         plt.savefig(experiment_path+"/"+_epoch_number+"/plot.png")
         print experiment_path, _epoch_number
