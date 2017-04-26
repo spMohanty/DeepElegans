@@ -106,3 +106,5 @@ model.fit_generator(
     validation_steps=nb_validation_samples // batch_size,
     callbacks=[_csvLogger, _checkpointer],
     verbose=1)
+
+#WORKING

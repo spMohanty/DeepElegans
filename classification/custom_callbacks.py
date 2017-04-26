@@ -3,6 +3,7 @@
 import os
 import csv
 import numpy as np
+import copy
 
 from collections import deque
 from collections import OrderedDict
@@ -47,10 +48,11 @@ class CSVLoggerCustom(Callback):
 
     def on_batch_end(self, batch, logs=None):
         logs = logs or {}
-        logs["epoch_"] = self.current_epoch
-        logs["val_loss"] = -1000 #Ignore this value when parsing CSV
-        logs["val_acc"] = -1000 #Ignore this value when parsing CSV
-        logs['batch'] = batch
+        _logs = copy.deepcopy(logs)
+        _logs["epoch"] = self.current_epoch
+        _logs["val_loss"] = None
+        _logs["val_acc"] = None
+        _logs['batch'] = batch
 
         def handle_value(k):
             is_zero_dim_ndarray = isinstance(k, np.ndarray) and k.ndim == 0
@@ -61,7 +63,7 @@ class CSVLoggerCustom(Callback):
 
 
         if not self.writer:
-            self.keys = sorted(logs.keys())
+            self.keys = sorted(_logs.keys())
 
             class CustomDialect(csv.excel):
                 delimiter = self.sep
@@ -74,15 +76,18 @@ class CSVLoggerCustom(Callback):
         row_dict = OrderedDict({})
 
 
-        row_dict.update((key, handle_value(logs[key])) for key in sorted(['batch','acc','epoch_','loss','val_acc','val_loss']))
+        row_dict.update((key, handle_value(_logs[key])) for key in sorted(['batch','acc','epoch','loss','val_acc','val_loss']))
         self.writer.writerow(row_dict)
         self.csv_file.flush()
 
 
     def on_epoch_end(self, epoch, logs=None):
         logs = logs or {}
-        logs['batch'] = -1000 #Ignore this value when parsing CSV
-        logs['epoch_'] = epoch
+        _logs = copy.deepcopy(logs)
+        _logs['batch'] = None
+        _logs['epoch'] = epoch
+
+
 
         self.current_epoch = epoch + 1
 
@@ -107,7 +112,7 @@ class CSVLoggerCustom(Callback):
         #row_dict = OrderedDict({'epoch': epoch})
         row_dict = OrderedDict({})
 
-        row_dict.update((key, handle_value(logs[key])) for key in sorted(['batch','acc','epoch_','loss','val_acc','val_loss']))
+        row_dict.update((key, handle_value(_logs[key])) for key in sorted(['batch','acc','epoch','loss','val_acc','val_loss']))
         self.writer.writerow(row_dict)
         self.csv_file.flush()
 
