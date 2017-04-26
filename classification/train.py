@@ -19,8 +19,19 @@ GPU_COUNT = 2
 # dimensions of our images.
 img_width, img_height = 256, 256
 
-train_data_dir = '../data/train_test/train'
-validation_data_dir = '../data/train_test/test'
+# train_data_dir = '../data/train_test/train'
+# validation_data_dir = '../data/train_test/test'
+
+COAGULATED = True
+
+if COAGULATED:
+    train_data_dir = '../data/train_test/train'
+    validation_data_dir = '../data/train_test/test'
+else:
+    train_data_dir = '../data/train_test_uncoagulated/train'
+    validation_data_dir = '../data/train_test_uncoagulated/test'
+
+
 nb_train_samples = 4155
 nb_validation_samples = 1065
 epochs = 30
@@ -82,7 +93,10 @@ validation_generator = test_datagen.flow_from_directory(
 
 model.summary()
 
-experiment_name = "results/coagulated-vgg16"
+if COAGULATED:
+    experiment_name = "results/coagulated"
+else:
+    experiment_name = "results/uncoagulated"    
 
 try:
     shutil.rmtree(experiment_name)
