@@ -6,10 +6,13 @@ from keras.models import Sequential
 from keras.models import Model
 from keras.layers import Dropout, Flatten, Dense
 from keras.callbacks import ModelCheckpoint, CSVLogger
+from multi_gpu import multi_gpu
+from custom_callbacks import CSVLoggerCustom
 
 import shutil
 import os
 
+GPU_COUNT = 2
 # path to the model weights files.
 # weights_path = '../keras/examples/vgg16_weights.h5'
 # top_model_weights_path = 'bottleneck_fc_model.h5'
@@ -21,7 +24,7 @@ validation_data_dir = '../data/train_test/test'
 nb_train_samples = 4155
 nb_validation_samples = 1065
 epochs = 30
-batch_size = 32
+batch_size = 32 * GPU_COUNT
 
 # build the VGG16 network
 base_model = applications.VGG16(weights='imagenet', include_top=False, input_shape=(256,256,3))
@@ -43,6 +46,8 @@ top_model.add(Dense(5, activation='softmax'))
 # model.add(top_model)
 model = Model(inputs=base_model.input, outputs=top_model(base_model.output))
 
+if GPU_COUNT > 1:
+    model = multi_gpu(model, GPU_COUNT)
 # set the first 25 layers (up to the last conv block)
 # to non-trainable (weights will not be updated)
 # for layer in model.layers[:15]:
@@ -89,7 +94,7 @@ try:
 except:
     pass
 
-_csvLogger = CSVLogger(experiment_name+"/log.csv")
+_csvLogger = CSVLoggerCustom(experiment_name+"/log.csv")
 _checkpointer = ModelCheckpoint(filepath=experiment_name+"/snapshots/checkpoint-{epoch:02d}-{val_acc:.2f}-{val_loss:.2f}.hdf5", verbose=0, save_best_only=False)
 
 # fine-tune the model
