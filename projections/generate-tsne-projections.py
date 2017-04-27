@@ -7,7 +7,6 @@ import pickle
 from tsne import bh_sne
 
 
-COAGULATED = False
 for COAGULATED in [True, False]:
     classes = sorted(['2016.07.18', '2016.07.20', '2016.07.22', '2016.07.24', '2016.07.26'])
     classMap = {}

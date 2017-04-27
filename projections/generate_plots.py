@@ -16,11 +16,23 @@ my_cmap = ListedColormap(sns.color_palette(flatui).as_hex())
 
 
 for experiment_path in glob.glob("results/*"):
+
     print experiment_path
-    number_of_epochs = len(glob.glob(experiment_path+"/*"))
+    epochs = glob.glob(experiment_path+"/*")
+
+    filtered_number_of_epochs = []
+    for _x in epochs:
+        try:
+            foo = int(_x.split("/")[-1])
+            filtered_number_of_epochs.append(_x)
+        except:
+            pass
+    number_of_epochs = len(filtered_number_of_epochs)
+
+
     for _epoch_number in range(number_of_epochs):
         _epoch_number = str(_epoch_number).zfill(2)#TO-DO: Make it generic
-        projection = pickle.load(open(experiment_path+"/"+_epoch_number+"/projections.pickle"))
+        projection = pickle.load(open(experiment_path+"/"+_epoch_number+"/projections.npy"))
 
         class_indices = projection['classIndex_list']
         class_map = projection['classMap']
