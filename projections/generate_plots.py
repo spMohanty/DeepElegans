@@ -32,7 +32,7 @@ for experiment_path in glob.glob("results/*"):
 
     for _epoch_number in range(number_of_epochs):
         _epoch_number = str(_epoch_number).zfill(2)#TO-DO: Make it generic
-        projection = pickle.load(open(experiment_path+"/"+_epoch_number+"/projections.npy"))
+        projection = pickle.load(open(experiment_path+"/"+_epoch_number+"/projections.pickle"))
 
         class_indices = projection['classIndex_list']
         class_map = projection['classMap']

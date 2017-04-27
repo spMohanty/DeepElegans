@@ -6,7 +6,7 @@ import os
 import imageio
 
 
-for folders in ["results/uncoagulated/"]:#, "results/uncoagulated/"]:
+for folders in ["results/coagulated/", "results/uncoagulated/"]:
     frames = glob.glob(folders+"/*")
     filtered_number_of_frames = []
     for _x in frames:
@@ -20,12 +20,15 @@ for folders in ["results/uncoagulated/"]:#, "results/uncoagulated/"]:
     filenames = []
     for n in range(number_of_frames):
         epoch_name = str(n).zfill(2)
-        filenames.append(os.path.abspath(folders+"/"+epoch_name+"/plot.png"))
+        if n ==0:
+            for k in range(10):
+                filenames.append(os.path.abspath(folders+"/"+epoch_name+"/plot.png"))
+        else:
+            filenames.append(os.path.abspath(folders+"/"+epoch_name+"/plot.png"))
+
 
     images = [imageio.imread(fn) for fn in filenames]
-    #Add the last frame for 10 more times
-    for k in range(10):
-        images.append(images[-1])
+
     target_filename = open(folders+"/animation.gif", "w")
-    kargs = { 'duration': 0.2 }
+    kargs = { 'duration': 0.3 }
     imageio.mimsave(target_filename, images, 'GIF', **kargs)

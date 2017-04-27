@@ -59,4 +59,4 @@ for COAGULATED in [True, False]:
         combined_results['classIndex_list'] = classIndex_list
         combined_results['classMap'] = classMap
 
-        pickle.dump(combined_results, open(epoch_path+"/projections.npy", "wb"))
+        pickle.dump(combined_results, open(epoch_path+"/projections.pickle", "wb"))
